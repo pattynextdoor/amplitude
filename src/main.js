@@ -7,7 +7,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueResource);
 Vue.http.headers.common['Access-Control-Allow-Origin'] = '*';
-Vue.http.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
+Vue.http.headers.common['Content-Type'] = 'application/json';
 
 new Vue({
   router,
