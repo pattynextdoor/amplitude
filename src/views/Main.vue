@@ -50,7 +50,7 @@ export default {
       let token = address.substr(address.indexOf('=') + 1);
       token = token.substr(0, token.indexOf('&'));
 
-      this.$data.token= token;
+      this.$data.token = token;
     },
     getRecommendations: function(topTracks) {
       let token = this.$data.token;
@@ -209,45 +209,48 @@ export default {
         easing: 'easeInOutQuart',
         direction: 'alternate'
       });
-      if (this.amplistExists()) {
+      if (!this.amplistExists()) {
         // Create amplist 
         this.createAmplist();
       }
-      // Add current track
-      let token = this.$data.token;
-      let reqUrl = 'https://api.spotify.com/v1/me/playlists';
 
-      this.$http.get(reqUrl,
-      {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      })
-      .then(function(response) {
-        let playlists = response.body.items;
+      setTimeout(function() {
+        // Add current track
+        let token = this.$data.token;
+        let reqUrl = 'https://api.spotify.com/v1/me/playlists';
 
-        for (let i = 0; i < playlists.length; i++) {
-          if (playlists[i].name == "Amplist - Curated By Amplitude") {
-            this.$data.amplistId = playlists[i].id;
-          } 
-        }
-
-        let reqUrl = 'https://api.spotify.com/v1/playlists/'
-                      + this.$data.amplistId + '/tracks'
-                      + '?uris=' + encodeURIComponent(this.$data.currTrackUri);
-        
-        this.$http.post(reqUrl, 
-        {
-          body: {
-            'uris': encodeURIComponent(this.$data.currTrackUri)
-          }
-        },
+        this.$http.get(reqUrl,
         {
           headers: {
-            'Authorization': 'Bearer ' + this.$data.token
+            'Authorization': 'Bearer ' + token
           }
         })
-      })
+        .then(function(response) {
+          let playlists = response.body.items;
+
+          for (let i = 0; i < playlists.length; i++) {
+            if (playlists[i].name == "Amplist - Curated By Amplitude") {
+              this.$data.amplistId = playlists[i].id;
+            } 
+          }
+
+          let reqUrl = 'https://api.spotify.com/v1/playlists/'
+                        + this.$data.amplistId + '/tracks'
+                        + '?uris=' + encodeURIComponent(this.$data.currTrackUri);
+          this.$http.post(reqUrl, 
+          {
+            body: {
+              'uris': encodeURIComponent(this.$data.currTrackUri)
+            }
+          },
+          {
+            headers: {
+              'Authorization': 'Bearer ' + this.$data.token
+            }
+          })
+        });
+      }, 100);
+      
 
     },
     amplistExists: function() {
@@ -264,6 +267,8 @@ export default {
         let playlists = response.body.items;
 
         for (let i = 0; i < playlists.length; i++) {
+          console.log(playlists[i].name);
+          console.log('Amplist - Curated By Amplitude');
           if (playlists[i].name == 'Amplist - Curated By Amplitude') {
             return true;
           }

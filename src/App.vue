@@ -2,10 +2,21 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link>
+      <router-link v-if="!firebase.auth().currentUser" to="/login">Login</router-link>
+      <router-link v-if="!firebase.auth().currentUser" to="/signup">Sign Up</router-link>
+      <router-link v-if="firebase.auth().currentUser" to="/main">Your Recommendations</router-link>
     </div>
     <router-view/>
   </div>
 </template>
+
+<script>
+import firebase from 'firebase'
+
+export default {
+  
+}
+</script>
 
 <style>
 #app {
